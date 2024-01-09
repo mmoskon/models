@@ -3,6 +3,10 @@ from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import numpy as np
     
+# An example of simulation using new scipy solver: solve_ivp
+
+
+# the model function has Y and T parameters reversed in comparison to odeint:
 def three_bit_model_ivp(Y, T, params):
     return three_bit_model(T, Y, params)
 
