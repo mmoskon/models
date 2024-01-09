@@ -1,14 +1,14 @@
 from models import *
 from hill_functions import hybrid
 
-from scipy.integrate import odeint
+from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 
     
 def xor(in1, in2, Kd, n):
     return hybrid(in1,in2, Kd, n, Kd, n) + hybrid(in2,in1, Kd, n, Kd, n) 
 
-def xor_test(Y, T, params):
+def xor_test(T, Y, params):
     in1, in2, y = Y
     alpha1, alpha2, alpha3, alpha4, delta1, delta2, Kd, n = params
 
@@ -50,14 +50,17 @@ for ax,(in1, in2) in zip(axs.flat,ins):
     T = np.linspace(0, t_end, N) # vector of timesteps
 
     # numerical interation
-    Y = odeint(xor_test, Y0, T, args=(params,))
+    sol = solve_ivp(xor_test, [0, t_end], Y0, args=(params,), dense_output=True)
 
-    Y_reshaped = np.split(Y, Y.shape[1], 1)
+    z = sol.sol(T)
+    Y = z.T
+
+    #Y_reshaped = np.split(Y, Y.shape[1], 1)
 
     # plotting the results
-    in_1 = Y_reshaped[0]
-    in_2 = Y_reshaped[1]
-    y = Y_reshaped[2]
+    in_1 = Y[:,0] #Y_reshaped[0]
+    in_2 = Y[:,1] #Y_reshaped[1]
+    y = Y[:,2] # Y_reshaped[2]
 
     ax.plot(T, in_1, label='in_1')
     ax.plot(T, in_2, label='in_2')
